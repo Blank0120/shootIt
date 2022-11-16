@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { Player } from "../core/core";
+import { Player, Projectile } from "../core/core";
 
 const canvasRef = ref();
 
@@ -9,19 +9,41 @@ onMounted(() => {
     throw new Error("canvas is undefined");
   }
   const canvas: HTMLCanvasElement = canvasRef.value;
-
   const ctx = canvas.getContext('2d');
   if (!ctx) {
     throw new Error("the canvas's 2D context is null");
   }
-
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
+  // create a player
   const player = new Player(canvas.width / 2, canvas.height / 2, 25, 'white');
-  player.draw(ctx);
 
-})
+  // create projectile when click mouse
+  const projectiles: Projectile[] = [];
+  window.addEventListener('click', (event: MouseEvent) => {
+    const angle = Math.atan2(event.clientY - canvas.height / 2, event.clientX - canvas.width / 2);
+    const velocity = {
+      x: Math.cos(angle),
+      y: Math.sin(angle)
+    };
+
+    projectiles.push(new Projectile(canvas.width / 2, canvas.height / 2, 5, 'red', velocity));
+  });
+
+  // update animate
+  (function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    player.draw(ctx);
+
+    projectiles.forEach((projectile) => {
+      projectile.update(ctx);
+    });
+
+    requestAnimationFrame(animate);
+  })();
+
+});
 </script>
 
 <template>
