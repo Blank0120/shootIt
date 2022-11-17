@@ -23,7 +23,7 @@ onMounted(() => {
   const projectiles: Projectile[] = [];
   window.addEventListener('click', (event: MouseEvent) => {
     const angle = Math.atan2(event.clientY - canvas.height / 2, event.clientX - canvas.width / 2);
-    const velocity = {x: Math.cos(angle), y: Math.sin(angle)};
+    const velocity = { x: Math.cos(angle), y: Math.sin(angle) };
 
     projectiles.push(new Projectile(canvas.width / 2, canvas.height / 2, 5, 'red', velocity));
   });
@@ -45,7 +45,7 @@ onMounted(() => {
       }
 
       const angle = Math.atan2(canvas.height / 2 - y, canvas.width / 2 - x);
-      const velocity = {x: Math.cos(angle), y: Math.sin(angle)};
+      const velocity = { x: Math.cos(angle), y: Math.sin(angle) };
 
       enemies.push(new Enemy(x, y, radius, 'blue', velocity));
     }, 1500);
@@ -56,12 +56,32 @@ onMounted(() => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     player.draw(ctx);
 
-    projectiles.forEach((projectile) => {
+    projectiles.forEach((projectile, index) => {
       projectile.update(ctx);
+
+      // remove from edges of screen
+      if (
+        projectile.x + projectile.radius < 0 ||
+        projectile.x - projectile.radius > canvas.width ||
+        projectile.y + projectile.radius < 0 ||
+        projectile.y - projectile.radius > canvas.height
+      ) {
+        projectiles.splice(index, 1);
+      }
     });
 
-    enemies.forEach((enemy) => {
+    enemies.forEach((enemy, index) => {
       enemy.update(ctx);
+
+      // remove from edges of screen
+      if (
+        enemy.x + enemy.radius < 0 ||
+        enemy.x - enemy.radius > canvas.width ||
+        enemy.y + enemy.radius < 0 ||
+        enemy.y - enemy.radius > canvas.height
+      ) {
+        enemies.splice(index, 1);
+      }
     });
 
     requestAnimationFrame(animate);
