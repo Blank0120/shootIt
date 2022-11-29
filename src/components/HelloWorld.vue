@@ -4,6 +4,7 @@ import { Player, Projectile, Enemy } from "../core/core";
 import gsap from "gsap";
 
 const canvasRef = ref();
+let score = ref(0);
 
 onMounted(() => {
   if (!canvasRef.value) {
@@ -99,6 +100,7 @@ onMounted(() => {
         if (dist - enemy.radius - projectile.radius < 1) {
 
           if (enemy.radius - 10 > 5) {
+            score.value += 1;
             gsap.to(enemy, {
               radius: enemy.radius - 10,
             });
@@ -106,6 +108,7 @@ onMounted(() => {
               projectiles.splice(projectileIndex, 1);
             }, 0);
           } else {
+            score.value += 2;
             // remove flash with setTimeout
             setTimeout(() => {
               enemies.splice(index, 1);
@@ -127,6 +130,12 @@ onMounted(() => {
 
 <template>
   <div>
+    <!-- TODO tweak style with tailwind -->
+    <div style="position:absolute;color:white;user-select:none">
+      <span>
+        Score: {{score}}
+      </span>
+    </div>
     <canvas ref="canvasRef">
       This web runtime does not support canvas.
     </canvas>
