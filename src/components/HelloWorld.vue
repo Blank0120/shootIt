@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { Player, Projectile, Enemy } from "../core/core";
+import gsap from "gsap";
 
 const canvasRef = ref();
 
@@ -54,7 +55,7 @@ onMounted(() => {
   // update animate
   (function animate() {
     const animateID = requestAnimationFrame(animate);
-    
+
     ctx.fillStyle = 'rgb(0, 0, 0, 0.1)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     player.draw(ctx);
@@ -96,11 +97,23 @@ onMounted(() => {
       projectiles.forEach((projectile, projectileIndex) => {
         const dist = Math.hypot(enemy.x - projectile.x, enemy.y - projectile.y);
         if (dist - enemy.radius - projectile.radius < 1) {
-          // remove flash with setTimeout
-          setTimeout(() => {
-            enemies.splice(index, 1);
-            projectiles.splice(projectileIndex, 1);
-          }, 0);
+
+          if (enemy.radius - 10 > 5) {
+            gsap.to(enemy, {
+              radius: enemy.radius - 10,
+            });
+            setTimeout(() => {
+              projectiles.splice(projectileIndex, 1);
+            }, 0);
+          } else {
+            // remove flash with setTimeout
+            setTimeout(() => {
+              enemies.splice(index, 1);
+              projectiles.splice(projectileIndex, 1);
+            }, 0);
+          }
+
+
         }
 
       });
