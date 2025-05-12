@@ -126,7 +126,7 @@ onMounted(() => {
 <template>
   <div>
     <!-- TODO tweak style with tailwind -->
-    <div style="position:absolute;color:white;user-select:none">
+    <div class="fixed">
       <span>
         Score: {{ score }}
       </span>
