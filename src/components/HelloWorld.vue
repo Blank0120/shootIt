@@ -1,38 +1,33 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { Player } from "../core/core";
 
-defineProps<{ msg: string }>()
+const canvasRef = ref();
 
-const count = ref(0)
+onMounted(() => {
+  if (!canvasRef.value) {
+    throw new Error("canvas is undefined");
+  }
+  const canvas: HTMLCanvasElement = canvasRef.value;
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) {
+    throw new Error("the canvas's 2D context is null");
+  }
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const player = new Player(canvas.width / 2, canvas.height / 2, 25, 'white');
+  player.draw(ctx);
+
+})
 </script>
 
 <template>
-  <h1>{{ msg }}</h1>
-
-  <div class="card">
-    <button type="button" @click="count++">count is {{ count }}</button>
-    <p>
-      Edit
-      <code>components/HelloWorld.vue</code> to test HMR
-    </p>
+  <div>
+    <canvas ref="canvasRef">
+      This web runtime does not support canvas.
+    </canvas>
   </div>
-
-  <p>
-    Check out
-    <a href="https://vuejs.org/guide/quick-start.html#local" target="_blank"
-      >create-vue</a
-    >, the official Vue + Vite starter
-  </p>
-  <p>
-    Install
-    <a href="https://github.com/johnsoncodehk/volar" target="_blank">Volar</a>
-    in your IDE for a better DX
-  </p>
-  <p class="read-the-docs">Click on the Vite and Vue logos to learn more</p>
 </template>
-
-<style scoped>
-.read-the-docs {
-  color: #888;
-}
-</style>
