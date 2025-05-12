@@ -53,6 +53,8 @@ onMounted(() => {
 
   // update animate
   (function animate() {
+    const animateID = requestAnimationFrame(animate);
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     player.draw(ctx);
 
@@ -82,9 +84,28 @@ onMounted(() => {
       ) {
         enemies.splice(index, 1);
       }
+
+      // collision between enemy and player
+      const dist = Math.hypot(enemy.x - player.x, enemy.y - player.y);
+      if (dist - enemy.radius - player.radius < 1) {
+        cancelAnimationFrame(animateID);
+      }
+
+      // collision between enemy and projectile
+      projectiles.forEach((projectile, projectileIndex) => {
+        const dist = Math.hypot(enemy.x - projectile.x, enemy.y - projectile.y);
+        if (dist - enemy.radius - projectile.radius < 1) {
+          // remove flash with setTimeout
+          setTimeout(() => {
+            enemies.splice(index, 1);
+            projectiles.splice(projectileIndex, 1);
+          }, 0);
+        }
+
+      });
+
     });
 
-    requestAnimationFrame(animate);
   })();
 
 });
