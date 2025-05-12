@@ -61,7 +61,9 @@ onMounted(() => {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     player.draw(ctx);
 
-    projectiles.forEach((projectile, index) => {
+    for (let index = projectiles.length - 1; index >= 0; --index) {
+      const projectile = projectiles[index];
+
       projectile.update(ctx);
 
       // remove from edges of screen
@@ -73,9 +75,11 @@ onMounted(() => {
       ) {
         projectiles.splice(index, 1);
       }
-    });
+    }
 
-    enemies.forEach((enemy, index) => {
+    for (let index = enemies.length - 1; index >= 0; --index) {
+      const enemy = enemies[index];
+
       enemy.update(ctx);
 
       // remove from edges of screen
@@ -95,7 +99,9 @@ onMounted(() => {
       }
 
       // collision between enemy and projectile
-      projectiles.forEach((projectile, projectileIndex) => {
+      for (let projectileIndex = projectiles.length - 1; projectileIndex >= 0; --projectileIndex) {
+      const projectile = projectiles[projectileIndex];
+
         const dist = Math.hypot(enemy.x - projectile.x, enemy.y - projectile.y);
         if (dist - enemy.radius - projectile.radius < 1) {
 
@@ -104,27 +110,16 @@ onMounted(() => {
             gsap.to(enemy, {
               radius: enemy.radius - 10,
             });
-            setTimeout(() => {
               projectiles.splice(projectileIndex, 1);
-            }, 0);
           } else {
             score.value += 2;
-            // remove flash with setTimeout
-            setTimeout(() => {
               enemies.splice(index, 1);
               projectiles.splice(projectileIndex, 1);
-            }, 0);
           }
-
-
         }
-
-      });
-
-    });
-
+      };
+    };
   })();
-
 });
 </script>
 
@@ -133,7 +128,7 @@ onMounted(() => {
     <!-- TODO tweak style with tailwind -->
     <div style="position:absolute;color:white;user-select:none">
       <span>
-        Score: {{score}}
+        Score: {{ score }}
       </span>
     </div>
     <canvas ref="canvasRef">
